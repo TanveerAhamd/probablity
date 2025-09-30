@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dragon Tiger Practice</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #222; color: #fff; text-align: center; }
+    h1 { margin: 10px 0; }
+    .cards { display: flex; justify-content: center; margin: 20px 0; font-size: 28px; }
+    .card { background: #333; padding: 20px; margin: 10px; border-radius: 10px; width: 120px; }
+    .btn { background: #f39c12; border: none; padding: 10px 20px; margin: 10px; font-size: 18px; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #e67e22; }
+    #result { font-size: 24px; margin: 20px 0; font-weight: bold; }
+    .history { margin-top: 20px; }
+    .history-table { display: grid; grid-template-columns: repeat(20, 30px); gap: 5px; justify-content: center; }
+    .cell { width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 14px; font-weight: bold; }
+    .dragon { background: #3498db; color: #fff; }
+    .tiger { background: #e67e22; color: #fff; }
+    .tie { background: #2ecc71; color: #fff; }
+    .stats { margin-top: 15px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <h1>🐉 Dragon Tiger 🐅</h1>
+  <button class="btn" onclick="playRound()">Play Round</button>
+
+  <div class="cards">
+    <div class="card" id="dragonCard">Dragon: ?</div>
+    <div class="card" id="tigerCard">Tiger: ?</div>
+  </div>
+
+  <div id="result">Result: -</div>
+
+  <div class="history">
+    <h2>History (Last 20)</h2>
+    <div class="history-table" id="historyTable"></div>
+    <div class="stats" id="stats">Dragon: 0 | Tiger: 0 | Tie: 0</div>
+  </div>
+
+  <script>
+    const suits = ["♠", "♥", "♦", "♣"];
+    const values = [2,3,4,5,6,7,8,9,10,"J","Q","K","A"];
+    const rank = {2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,"J":11,"Q":12,"K":13,"A":14};
+
+    let history = [];
+    let dragonWins = 0, tigerWins = 0, ties = 0;
+
+    function getRandomCard() {
+      const value = values[Math.floor(Math.random()*values.length)];
+      const suit = suits[Math.floor(Math.random()*suits.length)];
+      return {value, suit, rank: rank[value]};
+    }
+
+    function playRound() {
+      const dragon = getRandomCard();
+      const tiger = getRandomCard();
+
+      document.getElementById("dragonCard").innerText = `Dragon: ${dragon.value}${dragon.suit}`;
+      document.getElementById("tigerCard").innerText = `Tiger: ${tiger.value}${tiger.suit}`;
+
+      let result;
+      if(dragon.rank > tiger.rank) {
+        result = "Dragon";
+        dragonWins++;
+        history.push("D");
+      } else if(tiger.rank > dragon.rank) {
+        result = "Tiger";
+        tigerWins++;
+        history.push("T");
+      } else {
+        result = "Tie";
+        ties++;
+        history.push("Tie");
+      }
+
+      document.getElementById("result").innerText = `Result: ${result}`;
+
+      // Limit history to last 20
+      if(history.length > 20) history.shift();
+
+      updateHistory();
+    }
+
+    function updateHistory() {
+      const table = document.getElementById("historyTable");
+      table.innerHTML = "";
+      history.forEach(item => {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        if(item === "D") { cell.classList.add("dragon"); cell.innerText = "D"; }
+        else if(item === "T") { cell.classList.add("tiger"); cell.innerText = "T"; }
+        else { cell.classList.add("tie"); cell.innerText = "Tie"; }
+        table.appendChild(cell);
+      });
+
+      document.getElementById("stats").innerText =
+        `Dragon: ${dragonWins} | Tiger: ${tigerWins} | Tie: ${ties}`;
+    }
+  </script>
+</body>
+</html>

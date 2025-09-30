@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teen Patti Dragon Tiger</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #0b132b;
+      color: #fff;
+    }
+    h1 {
+      margin-top: 20px;
+      color: #ffcc00;
+    }
+    .board {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px;
+    }
+    .side {
+      background: #1c2541;
+      padding: 20px;
+      border-radius: 10px;
+      width: 200px;
+    }
+    .cards {
+      margin-top: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      background: #3a506b;
+      padding: 10px;
+      border-radius: 8px;
+      min-height: 40px;
+    }
+    .bet-buttons {
+      margin: 20px;
+    }
+    button {
+      background: #5bc0be;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #6fffe9;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐉 Teen Patti Dragon Tiger 🐯</h1>
+  
+  <div class="board">
+    <div class="side">
+      <h2>Dragon</h2>
+      <div class="cards" id="dragonCards">?</div>
+    </div>
+    <div class="side">
+      <h2>Tiger</h2>
+      <div class="cards" id="tigerCards">?</div>
+    </div>
+  </div>
+
+  <div class="bet-buttons">
+    <button onclick="playGame('dragon')">Bet on Dragon</button>
+    <button onclick="playGame('tiger')">Bet on Tiger</button>
+    <button onclick="playGame('tie')">Bet on Tie</button>
+  </div>
+
+  <h2 id="result">Place your bet!</h2>
+
+  <script>
+    const suits = ["♠", "♥", "♦", "♣"];
+    const ranks = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
+    let deck = [];
+
+    function createDeck() {
+      deck = [];
+      for (let s of suits) {
+        for (let r of ranks) {
+          deck.push(r + s);
+        }
+      }
+    }
+
+    function shuffleDeck() {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+    }
+
+    function rankValue(card) {
+      let r = card.slice(0, -1);
+      const map = {"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"10":10,"J":11,"Q":12,"K":13,"A":14};
+      return map[r];
+    }
+
+    function playGame(bet) {
+      createDeck();
+      shuffleDeck();
+
+      let dragon = deck.slice(0, 3);
+      let tiger = deck.slice(3, 6);
+
+      let dragonScore = Math.max(...dragon.map(rankValue));
+      let tigerScore = Math.max(...tiger.map(rankValue));
+
+      let winner = "";
+      if (dragonScore > tigerScore) {
+        winner = "dragon";
+      } else if (tigerScore > dragonScore) {
+        winner = "tiger";
+      } else {
+        winner = "tie";
+      }
+
+      document.getElementById("dragonCards").innerText = dragon.join(" ");
+      document.getElementById("tigerCards").innerText = tiger.join(" ");
+      document.getElementById("result").innerText = 
+        `Winner: ${winner.toUpperCase()} | You bet: ${bet.toUpperCase()} → ${winner === bet ? "YOU WON 🎉" : "YOU LOST ❌"}`;
+    }
+  </script>
+</body>
+</html>

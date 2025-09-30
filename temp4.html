@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dragon Tiger Simulation</title>
+  <style>
+    body { background:#111; color:#eee; font-family:Arial; text-align:center; padding:20px; }
+    h1 { margin-bottom:20px; }
+    .log { background:#222; padding:15px; border-radius:10px; height:400px; overflow-y:auto; text-align:left; }
+    button { background:#f39c12; border:none; padding:10px 20px; font-size:18px; border-radius:6px; cursor:pointer; }
+    button:hover { background:#e67e22; }
+    .result { margin-top:20px; font-size:20px; font-weight:bold; }
+  </style>
+</head>
+<body>
+
+<h1>🐉 Dragon Tiger Strategy Simulation 🐅</h1>
+<button onclick="runSimulation()">Run 180 Rounds</button>
+
+<div class="log" id="log"></div>
+<div class="result" id="summary"></div>
+
+<script>
+function runSimulation() {
+  const rounds = 180;
+  const betAmount = 100;
+  let balance = 0, wins = 0, losses = 0;
+
+  let history = [];
+  let log = "";
+
+  function randomResult() {
+    const r = Math.random();
+    if(r < 0.49) return "D";     // Dragon ~49%
+    else if(r < 0.98) return "T"; // Tiger ~49%
+    else return "Tie";           // Tie ~2%
+  }
+
+  for(let i=1; i<=rounds; i++) {
+    const result = randomResult();
+    history.push(result);
+
+    let bet = null;
+
+    // strategy: bet only if streak >= 3
+    if(history.length >= 3) {
+      const last3 = history.slice(-3);
+      if(last3.every(x => x === "D")) bet = "D";
+      else if(last3.every(x => x === "T")) bet = "T";
+
+      // reversal attempt if streak >= 5
+      const last5 = history.slice(-5);
+      if(last5.every(x => x === "D")) bet = (Math.random()<0.3) ? "T" : "D"; 
+      if(last5.every(x => x === "T")) bet = (Math.random()<0.3) ? "D" : "T"; 
+    }
+
+    if(bet && result !== "Tie") {
+      if(bet === result) {
+        balance += betAmount;
+        wins++;
+        log += `Round ${i}: Bet ${bet}, Result ${result} ✅ WIN (+${betAmount})\n`;
+      } else {
+        balance -= betAmount;
+        losses++;
+        log += `Round ${i}: Bet ${bet}, Result ${result} ❌ LOSE (-${betAmount})\n`;
+      }
+    } else {
+      log += `Round ${i}: Result ${result}, No Bet\n`;
+    }
+  }
+
+  document.getElementById("log").innerText = log;
+  document.getElementById("summary").innerText =
+    `Total Wins: ${wins}, Losses: ${losses}, Final Balance: ${balance} Rs`;
+}
+</script>
+
+</body>
+</html>

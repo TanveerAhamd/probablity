@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dragon Tiger Live Assistant</title>
+  <style>
+    body { background:#111; color:#eee; font-family:Arial; text-align:center; padding:20px; }
+    h1 { margin-bottom:20px; }
+    button { margin:5px; padding:10px 20px; font-size:18px; border:none; border-radius:6px; cursor:pointer; }
+    .dragon { background:#3498db; color:white; }
+    .tiger { background:#e67e22; color:white; }
+    .tie { background:#2ecc71; color:white; }
+    .log { background:#222; padding:15px; border-radius:10px; height:350px; overflow-y:auto; text-align:left; margin-top:20px; }
+    .suggest { margin-top:15px; font-size:22px; font-weight:bold; color:#f1c40f; }
+  </style>
+</head>
+<body>
+
+<h1>🐉 Dragon Tiger Live Assistant 🐅</h1>
+
+<button class="dragon" onclick="addResult('D')">Dragon (D)</button>
+<button class="tiger" onclick="addResult('T')">Tiger (T)</button>
+<button class="tie" onclick="addResult('Tie')">Tie</button>
+
+<div class="suggest" id="suggestion">👉 Enter result to start...</div>
+
+<div class="log" id="log"></div>
+
+<script>
+let history = [];
+
+function addResult(result) {
+  history.push(result);
+  let streak = 1;
+  let last = result;
+
+  // calculate streak ignoring Tie
+  for (let i = history.length - 2; i >= 0; i--) {
+    if (history[i] === last) streak++;
+    else if (history[i] === "Tie") continue; 
+    else break;
+  }
+
+  // suggestion logic
+  let suggestion = "👉 Skip / Observe";
+  if (result !== "Tie" && streak >= 3) {
+    suggestion = `🔥 BET on ${result === "D" ? "Dragon 🐉" : "Tiger 🐅"}`;
+  }
+
+  // update logs
+  let logText = history.map((r, i) => `Round ${i+1}: ${r}`).join("\n");
+  document.getElementById("log").innerText = logText;
+  document.getElementById("suggestion").innerText = suggestion;
+}
+</script>
+
+</body>
+</html>
